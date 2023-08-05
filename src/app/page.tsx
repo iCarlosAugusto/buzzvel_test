@@ -44,8 +44,21 @@ export default function Home() {
     const tasksUpdated = tasks.filter((taskItem) => taskItem.id !== task.id);
     setTasks(tasksUpdated);
     await axios.post("http://localhost:3000/task/delete", {
-      "id": task.id
+      id: task.id,
     });
+  };
+
+  const handleChangeTaskStatus = async (task: Task, index: number) => {
+    const statusUpdated = !task.isDone;
+    setTasks((oldState) => {
+      const tasksTotal = [...oldState];
+      tasksTotal[index].isDone = statusUpdated;
+      return tasksTotal;
+    });
+    await axios.post('http://localhost:3000/task/update', {
+      id: task.id,
+      isDone: statusUpdated
+    })
   };
 
   useEffect(() => {
@@ -80,6 +93,8 @@ export default function Home() {
             key={index}
             title={task.title}
             createdAt={task.createdAt}
+            isDone={task.isDone}
+            changeDoneStatus={() => handleChangeTaskStatus(task, index)}
             deleteTask={() => handleDeleteTask(task)}
           />
         ))}
