@@ -10,8 +10,8 @@ export const InputComponent: React.FC<InputProps> = ({
 }) => {
   return (
     <div className="flex">
-      <div className=' bg-gray-400 p-5 rounedd-l-lg'>
-        <p className="mr-2 decoration-gray-600 font-medium">{label}</p>
+      <div>
+        <p className="font-medium">{label}</p>
       </div>
       <input className='flex-1 border-solid border-2 pr-1' {...rest}/>
     </div>
