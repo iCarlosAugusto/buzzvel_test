@@ -1,6 +1,8 @@
 "use client";
 
+import { ButtonComponent } from "@/components/button";
 import { InputComponent } from "@/components/input";
+import { InputSearchComponent } from "@/components/search_input";
 import axios from "axios";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -8,7 +10,6 @@ import * as Yup from "yup";
 
 interface InitialValuesProps {
   title: string;
-  message: string;
 }
 
 export default function Home() {
@@ -16,19 +17,20 @@ export default function Home() {
 
   const schema = Yup.object().shape({
     title: Yup.string().required("Campo obrigatório"),
-    message: Yup.string().required("Campo obrigatório"),
   });
 
   const initialValues: InitialValuesProps = {
     title: "",
-    message: "",
   };
 
   const subitForm = async (values: InitialValuesProps) => {
-    const { data: task} = await axios.post("http://localhost:3000/task/create", {
-      title: values.title,
-      message: values.message,
-    });
+    const { data: task } = await axios.post(
+      "http://localhost:3000/task/create",
+      {
+        title: values.title,
+        message: "TESTE REMOVER",
+      }
+    );
     const newTasks: Task[] = [...tasks, task];
     setTasks(newTasks);
   };
@@ -43,14 +45,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main>
+    <main className=" p-6">
       <div className="flex justify-between">
         <p> Olá, Carlos! O que vamos resolver hoje?</p>
-        <InputComponent label="Títutlo" value={""} onChange={() => {}} />
         <button> Pesquisar</button>
       </div>
 
-      <p className="text-2xl"> O vamos criar? </p>
+      <p className="text-5xl"> O vamos criar? </p>
       <Formik
         onSubmit={subitForm}
         initialValues={initialValues}
@@ -59,25 +60,22 @@ export default function Home() {
         {({ handleChange, values, handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <InputComponent
-              label="Títutlo"
+              placeholder="Títutlo"
               value={values.title}
+              onClickPlus={handleSubmit}
               onChange={handleChange("title")}
             />
-            <InputComponent
-              label="Mensagem"
-              value={values.message}
-              onChange={handleChange("message")}
-            />
-            <button type="submit">Create</button>
           </form>
         )}
       </Formik>
 
-      <p className="text-2xl"> To-do criadas </p>
-
-      {tasks.map((task, index) => (
-        <p key={index}> {task.title}</p>
-      ))}
+      <div className="pt-5">
+        <p className="text-5xl"> Created tasks </p>
+        <InputSearchComponent label="Títutlo" value={""} onChange={() => {}} />
+        {tasks.map((task, index) => (
+          <p key={index}> {task.title}</p>
+        ))}
+      </div>
     </main>
   );
 }
