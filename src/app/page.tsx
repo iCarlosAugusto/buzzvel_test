@@ -1,8 +1,8 @@
 "use client";
 
-import { ButtonComponent } from "@/components/button";
 import { InputComponent } from "@/components/input";
 import { InputSearchComponent } from "@/components/search_input";
+import { TaskItem } from "@/components/task_item";
 import axios from "axios";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -40,18 +40,21 @@ export default function Home() {
     setTasks(data);
   };
 
+  const handleDeleteTask = async (task: Task) => {
+    const tasksUpdated = tasks.filter((taskItem) => taskItem.id !== task.id);
+    setTasks(tasksUpdated);
+    await axios.post("http://localhost:3000/task/delete", {
+      "id": task.id
+    });
+  };
+
   useEffect(() => {
     fetchAllTasks();
   }, []);
 
   return (
     <main className=" p-6">
-      <div className="flex justify-between">
-        <p> Olá, Carlos! O que vamos resolver hoje?</p>
-        <button> Pesquisar</button>
-      </div>
-
-      <p className="text-5xl"> O vamos criar? </p>
+      <p className="text-5xl">What we gonna build today?</p>
       <Formik
         onSubmit={subitForm}
         initialValues={initialValues}
@@ -73,7 +76,12 @@ export default function Home() {
         <p className="text-5xl"> Created tasks </p>
         <InputSearchComponent label="Títutlo" value={""} onChange={() => {}} />
         {tasks.map((task, index) => (
-          <p key={index}> {task.title}</p>
+          <TaskItem
+            key={index}
+            title={task.title}
+            createdAt={task.createdAt}
+            deleteTask={() => handleDeleteTask(task)}
+          />
         ))}
       </div>
     </main>
