@@ -17,7 +17,8 @@ export default function Home() {
   const schema = Yup.object().shape({
     title: Yup.string().required("Campo obrigatório"),
   });
-
+  const [search, setSearch] = useState<string>("");
+  
   const initialValues: InitialValuesProps = {
     title: "",
   };
@@ -74,7 +75,10 @@ export default function Home() {
     );
 
     const totalTasks = [...tasks];
-    totalTasks[index].subTasks = [...(tasks[index].subTasks ?? []), subtaskResult];
+    totalTasks[index].subTasks = [
+      ...(tasks[index].subTasks ?? []),
+      subtaskResult,
+    ];
 
     setTasks(totalTasks);
   };
@@ -105,21 +109,35 @@ export default function Home() {
 
       <div className="pt-5">
         <p className="text-5xl"> Created tasks </p>
-        <InputSearchComponent label="Títutlo" value={""} onChange={() => {}} />
-        {tasks.map((task, index) => (
-          <TaskItem
-            key={index}
-            title={task.title}
-            createdAt={task.createdAt}
-            isDone={task.isDone}
-            subTasks={task.subTasks}
-            changeDoneStatus={() => handleChangeTaskStatus(task, index)}
-            createSubTask={(subTask) =>
-              handleCreateSubTask(task, index, subTask)
+        <InputSearchComponent
+          label="Títutlo"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {tasks
+          .filter((task) => {
+            if (search === "") {
+              return task;
+            } else if (
+              task.title.toLowerCase().includes(search.toLowerCase())
+            ) {
+              return task;
             }
-            deleteTask={() => handleDeleteTask(task)}
-          />
-        ))}
+          })
+          .map((task, index) => (
+            <TaskItem
+              key={index}
+              title={task.title}
+              createdAt={task.createdAt}
+              isDone={task.isDone}
+              subTasks={task.subTasks}
+              changeDoneStatus={() => handleChangeTaskStatus(task, index)}
+              createSubTask={(subTask) =>
+                handleCreateSubTask(task, index, subTask)
+              }
+              deleteTask={() => handleDeleteTask(task)}
+            />
+          ))}
       </div>
     </main>
   );
