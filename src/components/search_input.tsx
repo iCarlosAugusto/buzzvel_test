@@ -10,6 +10,7 @@ export const InputSearchComponent: React.FC<InputProps> = ({ label, ...rest }) =
     <div className="max-w-md w-full py-6">
       <div className="relative">
         <input
+          {...rest}
           type="text"
           placeholder="Search..."
           className="w-full py-2 pl-10 pr-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
