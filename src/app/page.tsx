@@ -7,6 +7,8 @@ import axios from "axios";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
+import Lottie from "react-lottie";
+import * as animationData from "../../public/empty.json";
 
 interface InitialValuesProps {
   title: string;
@@ -18,7 +20,7 @@ export default function Home() {
     title: Yup.string().required("Campo obrigatório"),
   });
   const [search, setSearch] = useState<string>("");
-  
+
   const initialValues: InitialValuesProps = {
     title: "",
   };
@@ -114,6 +116,21 @@ export default function Home() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        {tasks.length === 0 && (
+          <div className="w-full flex items-center flex-col">
+            <Lottie
+              height={400}
+              width={400}
+              options={{
+                autoplay: true,
+                loop: true,
+                animationData: animationData,
+              }}
+            />
+            <p>You do not have any task</p>
+          </div>
+        )}
+
         {tasks
           .filter((task) => {
             if (search === "") {
