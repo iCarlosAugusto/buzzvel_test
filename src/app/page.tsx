@@ -54,22 +54,30 @@ export default function Home() {
       tasksTotal[index].isDone = statusUpdated;
       return tasksTotal;
     });
-    await axios.post('http://localhost:3000/task/update', {
+    await axios.post("http://localhost:3000/task/update", {
       id: task.id,
-      isDone: statusUpdated
-    })
+      isDone: statusUpdated,
+    });
   };
 
-  const handleCreateSubTask = async (task: Task, index: number, subTask: string) => {
-    const {data: subtaskResult } = await axios.post('http://localhost:3000/task/createSubtask', {
-      taskId: task.id,
-      title: subTask
-    });
+  const handleCreateSubTask = async (
+    task: Task,
+    index: number,
+    subTask: string
+  ) => {
+    const { data: subtaskResult } = await axios.post(
+      "http://localhost:3000/task/createSubtask",
+      {
+        taskId: task.id,
+        title: subTask,
+      }
+    );
 
     const totalTasks = [...tasks];
-    totalTasks[index].subTasks = [...tasks[index].subTasks!, subtaskResult];
+    totalTasks[index].subTasks = [...(tasks[index].subTasks ?? []), subtaskResult];
+
     setTasks(totalTasks);
-  } 
+  };
 
   useEffect(() => {
     fetchAllTasks();
@@ -106,7 +114,9 @@ export default function Home() {
             isDone={task.isDone}
             subTasks={task.subTasks}
             changeDoneStatus={() => handleChangeTaskStatus(task, index)}
-            createSubTask={(subTask) => handleCreateSubTask(task, index, subTask)}
+            createSubTask={(subTask) =>
+              handleCreateSubTask(task, index, subTask)
+            }
             deleteTask={() => handleDeleteTask(task)}
           />
         ))}
