@@ -14,7 +14,6 @@ interface InitialValuesProps {
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
-
   const schema = Yup.object().shape({
     title: Yup.string().required("Campo obrigatório"),
   });
@@ -61,6 +60,17 @@ export default function Home() {
     })
   };
 
+  const handleCreateSubTask = async (task: Task, index: number, subTask: string) => {
+    const {data: subtaskResult } = await axios.post('http://localhost:3000/task/createSubtask', {
+      taskId: task.id,
+      title: subTask
+    });
+
+    const totalTasks = [...tasks];
+    totalTasks[index].subTasks = [...tasks[index].subTasks!, subtaskResult];
+    setTasks(totalTasks);
+  } 
+
   useEffect(() => {
     fetchAllTasks();
   }, []);
@@ -94,7 +104,9 @@ export default function Home() {
             title={task.title}
             createdAt={task.createdAt}
             isDone={task.isDone}
+            subTasks={task.subTasks}
             changeDoneStatus={() => handleChangeTaskStatus(task, index)}
+            createSubTask={(subTask) => handleCreateSubTask(task, index, subTask)}
             deleteTask={() => handleDeleteTask(task)}
           />
         ))}

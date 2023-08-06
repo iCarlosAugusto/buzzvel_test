@@ -4,4 +4,5 @@ interface Task {
   title: string;
   message: string;
   isDone: boolean;
+  subTasks?: Subtask[] 
 }
