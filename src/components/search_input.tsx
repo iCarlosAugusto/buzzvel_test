@@ -7,15 +7,15 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const InputSearchComponent: React.FC<InputProps> = ({ label, ...rest }) => {
   return (
-    <div className="max-w-md w-full py-6">
+    <div className="w-full py-6">
       <div className="relative">
         <input
           {...rest}
           type="text"
-          placeholder="Search..."
-          className="w-full py-2 pl-10 pr-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Search for task..."
+          className="w-full py-2 pl-2 pr-10 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
         />
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
           <Image
             src="search.svg"
             alt="Vercel Logo"

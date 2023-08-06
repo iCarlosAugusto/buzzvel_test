@@ -90,71 +90,73 @@ export default function Home() {
   }, []);
 
   return (
-    <main className=" p-6">
-      <p className="text-5xl">What we gonna build today?</p>
-      <Formik
-        onSubmit={subitForm}
-        initialValues={initialValues}
-        validationSchema={schema}
-      >
-        {({ handleChange, values, handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <InputComponent
-              placeholder="Títutlo"
-              value={values.title}
-              onClickPlus={handleSubmit}
-              onChange={handleChange("title")}
-            />
-          </form>
-        )}
-      </Formik>
+    <main className="p-6  flex flex-col items-center justify-start">
+      <div>
+        <p className="text-5xl">What we gonna build today?</p>
+        <Formik
+          onSubmit={subitForm}
+          initialValues={initialValues}
+          validationSchema={schema}
+        >
+          {({ handleChange, values, handleSubmit }) => (
+            <form onSubmit={handleSubmit}>
+              <InputComponent
+                placeholder="Títutlo"
+                value={values.title}
+                onClickPlus={handleSubmit}
+                onChange={handleChange("title")}
+              />
+            </form>
+          )}
+        </Formik>
 
-      <div className="pt-5">
-        <p className="text-5xl"> Created tasks </p>
-        <InputSearchComponent
-          label="Títutlo"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        {tasks.length === 0 && (
-          <div className="w-full flex items-center flex-col">
-            <Lottie
-              height={400}
-              width={400}
-              options={{
-                autoplay: true,
-                loop: true,
-                animationData: animationData,
-              }}
-            />
-            <p>You do not have any task</p>
-          </div>
-        )}
+        <div className="pt-5">
+          <p className="text-5xl"> Created tasks </p>
+          <InputSearchComponent
+            label="Títutlo"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {tasks.length === 0 && (
+            <div className="w-full flex items-center flex-col">
+              <Lottie
+                height={400}
+                width={400}
+                options={{
+                  autoplay: true,
+                  loop: true,
+                  animationData: animationData,
+                }}
+              />
+              <p>You do not have any task</p>
+            </div>
+          )}
 
-        {tasks
-          .filter((task) => {
-            if (search === "") {
-              return task;
-            } else if (
-              task.title.toLowerCase().includes(search.toLowerCase())
-            ) {
-              return task;
-            }
-          })
-          .map((task, index) => (
-            <TaskItem
-              key={index}
-              title={task.title}
-              createdAt={task.createdAt}
-              isDone={task.isDone}
-              subTasks={task.subTasks}
-              changeDoneStatus={() => handleChangeTaskStatus(task, index)}
-              createSubTask={(subTask) =>
-                handleCreateSubTask(task, index, subTask)
+          {tasks
+            .filter((task) => {
+              if (search === "") {
+                return task;
+              } else if (
+                task.title.toLowerCase().includes(search.toLowerCase())
+              ) {
+                return task;
               }
-              deleteTask={() => handleDeleteTask(task)}
-            />
-          ))}
+            })
+            .map((task, index) => (
+              <TaskItem
+                key={index}
+                title={task.title}
+                createdAt={task.createdAt}
+                isDone={task.isDone}
+                subTasks={task.subTasks}
+                changeDoneStatus={() => handleChangeTaskStatus(task, index)}
+                createSubTask={(subTask) =>
+                  handleCreateSubTask(task, index, subTask)
+                }
+                deleteTask={() => handleDeleteTask(task)}
+              />
+            ))}
+        </div>
       </div>
     </main>
   );
