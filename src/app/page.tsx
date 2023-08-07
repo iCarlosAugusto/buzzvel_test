@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Lottie from "react-lottie";
 import * as animationData from "../../public/empty.json";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
 interface InitialValuesProps {
   title: string;
@@ -85,10 +87,39 @@ export default function Home() {
     setTasks(totalTasks);
   };
 
+  const handleSetFilter = async (option: any) => {
+    if (option.value === "done") {
+      console.log('aqui!');
+      const { data } = await axios.get("http://localhost:3000/task/getAll", {
+        params: {
+          isDone: true,
+        },
+      });
+      console.log(data);
+      setTasks(data);
+    }
+
+    if (option.value === "not done") {
+      const { data } = await axios.get("http://localhost:3000/task/getAll", {
+        params: {
+          isDone: false,
+        },
+      });
+      setTasks(data);
+    }
+
+    if (option.value === "all") {
+      const { data } = await axios.get("http://localhost:3000/task/getAll");
+      setTasks(data);
+    }
+  };
+
   useEffect(() => {
     fetchAllTasks();
   }, []);
 
+  const options = ["all", "done", "not done"];
+  const defaultOption = options[0];
   return (
     <main className="p-6  flex flex-col items-center justify-start">
       <div>
@@ -111,7 +142,15 @@ export default function Home() {
         </Formik>
 
         <div className="pt-5">
-          <p className="text-5xl"> Created tasks </p>
+          <div className="flex items-center justify-between">
+            <p className="text-5xl"> Created tasks </p>
+            <Dropdown
+              options={options}
+              onChange={handleSetFilter}
+              value={defaultOption}
+              placeholder="Select an option"
+            />
+          </div>
           <InputSearchComponent
             label="Títutlo"
             value={search}
