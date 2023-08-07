@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
@@ -25,6 +25,7 @@ export const TaskItem = ({
   const [isCreatingSubtask, setIsCreatingSubtask] = useState(false);
   const wrapperRef = useRef(null);
   const [subTask, setSubTask] = useState<string>("");
+  const inputTaskRef = useRef<HTMLInputElement>(null);
 
   useOnClickOutside(wrapperRef, () => {
     handleClickOutside();
@@ -33,6 +34,19 @@ export const TaskItem = ({
   const handleClickOutside = () => {
     setIsCreatingSubtask(false);
   };
+
+  const handleCreateSubtask = () => {
+    if (!!subTask) {
+      createSubTask(subTask);
+      setSubTask("");
+      setIsCreatingSubtask(false);
+    }
+  };
+
+  const handleShowSubTaskForm = () => {
+    setIsCreatingSubtask(true);
+    inputTaskRef.current?.focus();
+  }
 
   return (
     <div className="flex items-center" ref={wrapperRef}>
@@ -47,10 +61,11 @@ export const TaskItem = ({
           <p className="text-white">{title}</p>
           {isCreatingSubtask && (
             <input
+              ref={inputTaskRef}
               className="bg-transparent mb-2"
               placeholder="Add a subtask"
               value={subTask}
-              onChange={(e) => setSubTask(e.target.value)}
+              onChange={({ target }) => setSubTask(target.value)}
             />
           )}
           <ul>
@@ -67,7 +82,7 @@ export const TaskItem = ({
         <div className="flex">
           {!isCreatingSubtask ? (
             <Image
-              onClick={() => setIsCreatingSubtask(true)}
+              onClick={handleShowSubTaskForm}
               src="plus-circle.svg"
               alt="Vercel Logo"
               className="cursor-pointer mr-2"
@@ -77,10 +92,7 @@ export const TaskItem = ({
             />
           ) : (
             <Image
-              onClick={() => {
-                createSubTask(subTask);
-                setIsCreatingSubtask(false);
-              }}
+              onClick={handleCreateSubtask}
               src="check.svg"
               alt="Vercel Logo"
               className="cursor-pointer mr-2"
