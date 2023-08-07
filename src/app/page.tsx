@@ -4,37 +4,26 @@ import { InputComponent } from "@/components/input";
 import { InputSearchComponent } from "@/components/search_input";
 import { TaskItem } from "@/components/task_item";
 import axios from "axios";
-import { Formik } from "formik";
 import { useEffect, useState } from "react";
-import * as Yup from "yup";
 import Lottie from "react-lottie";
 import * as animationData from "../../public/empty.json";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 
-interface InitialValuesProps {
-  title: string;
-}
-
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const schema = Yup.object().shape({
-    title: Yup.string().required("Campo obrigatório"),
-  });
+  const [title, setTitle] = useState<string>("");
   const [search, setSearch] = useState<string>("");
 
-  const initialValues: InitialValuesProps = {
-    title: "",
-  };
-
-  const subitForm = async (values: InitialValuesProps) => {
+  const subitForm = async () => {
     const { data: task } = await axios.post(
       "http://localhost:3000/task/create",
       {
-        title: values.title,
+        title: title,
         message: "TESTE REMOVER",
       }
     );
+    setTitle("");
     const newTasks: Task[] = [...tasks, task];
     setTasks(newTasks);
   };
@@ -89,7 +78,6 @@ export default function Home() {
 
   const handleSetFilter = async (option: any) => {
     if (option.value === "done") {
-      console.log('aqui!');
       const { data } = await axios.get("http://localhost:3000/task/getAll", {
         params: {
           isDone: true,
@@ -114,6 +102,12 @@ export default function Home() {
     }
   };
 
+  const handleCreateTaskByEnterKey = (key: string) => {
+    if (key === "Enter") {
+      subitForm();
+    }
+  };
+
   useEffect(() => {
     fetchAllTasks();
   }, []);
@@ -124,22 +118,14 @@ export default function Home() {
     <main className="p-6  flex flex-col items-center justify-start">
       <div>
         <p className="text-5xl">What we gonna build today?</p>
-        <Formik
-          onSubmit={subitForm}
-          initialValues={initialValues}
-          validationSchema={schema}
-        >
-          {({ handleChange, values, handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <InputComponent
-                placeholder="Títutlo"
-                value={values.title}
-                onClickPlus={handleSubmit}
-                onChange={handleChange("title")}
-              />
-            </form>
-          )}
-        </Formik>
+
+        <InputComponent
+          placeholder="Títutlo"
+          value={title}
+          onClickPlus={subitForm}
+          onKeyDown={({ key }) => handleCreateTaskByEnterKey(key)}
+          onChange={({ target }) => setTitle(target.value)}
+        />
 
         <div className="pt-5">
           <div className="flex items-center justify-between">
