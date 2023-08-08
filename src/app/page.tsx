@@ -9,11 +9,13 @@ import Lottie from "react-lottie";
 import * as animationData from "../../public/empty.json";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState<string>("");
   const [search, setSearch] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [titleError, setTitleError] = useState<string>("");
 
   const subitForm = async () => {
@@ -22,41 +24,76 @@ export default function Home() {
       return;
     }
     setTitleError("");
-    const { data: task } = await axios.post(
-      "http://localhost:3000/task/create",
-      {
-        title: title,
-      }
-    );
-    setTitle("");
-    const newTasks: Task[] = [...tasks, task];
-    setTasks(newTasks);
+    try {
+      const { data: task } = await axios.post(
+        "http://localhost:3000/task/create",
+        {
+          title: title,
+        }
+      );
+      setTitle("");
+      const newTasks: Task[] = [...tasks, task];
+      setTasks(newTasks);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
   };
 
   const fetchAllTasks = async () => {
-    const { data } = await axios.get("http://localhost:3000/task/getAll");
-    setTasks(data);
+    setIsLoading(true);
+    try {
+      const { data } = await axios.get("http://localhost:3000/task/getAll");
+      setTasks(data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
   };
 
   const handleDeleteTask = async (task: Task) => {
-    const tasksUpdated = tasks.filter((taskItem) => taskItem.id !== task.id);
-    setTasks(tasksUpdated);
-    await axios.post("http://localhost:3000/task/delete", {
-      id: task.id,
-    });
+    try {
+      await axios.post("http://localhost:3000/task/delete", {
+        id: task.id,
+      });
+      const tasksUpdated = tasks.filter((taskItem) => taskItem.id !== task.id);
+      setTasks(tasksUpdated);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
   };
 
   const handleChangeTaskStatus = async (task: Task, index: number) => {
     const statusUpdated = !task.isDone;
-    setTasks((oldState) => {
-      const tasksTotal = [...oldState];
-      tasksTotal[index].isDone = statusUpdated;
-      return tasksTotal;
-    });
-    await axios.post("http://localhost:3000/task/update", {
-      id: task.id,
-      isDone: statusUpdated,
-    });
+    try {
+      await axios.post("http://localhost:3000/task/update", {
+        id: task.id,
+        isDone: statusUpdated,
+      });
+      setTasks((oldState) => {
+        const tasksTotal = [...oldState];
+        tasksTotal[index].isDone = statusUpdated;
+        return tasksTotal;
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
   };
 
   const handleCreateSubTask = async (
@@ -64,46 +101,54 @@ export default function Home() {
     index: number,
     subTask: string
   ) => {
-    const { data: subtaskResult } = await axios.post(
-      "http://localhost:3000/task/createSubtask",
-      {
-        taskId: task.id,
-        title: subTask,
-      }
-    );
+    try {
+      const { data: subtaskResult } = await axios.post(
+        "http://localhost:3000/task/createSubtask",
+        {
+          taskId: task.id,
+          title: subTask,
+        }
+      );
 
-    const totalTasks = [...tasks];
-    totalTasks[index].subTasks = [
-      ...(tasks[index].subTasks ?? []),
-      subtaskResult,
-    ];
+      const totalTasks = [...tasks];
+      totalTasks[index].subTasks = [
+        ...(tasks[index].subTasks ?? []),
+        subtaskResult,
+      ];
 
-    setTasks(totalTasks);
+      setTasks(totalTasks);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
   };
 
   const handleSetFilter = async (option: any) => {
+    let isDone: boolean | undefined = undefined;
+
     if (option.value === "done") {
-      const { data } = await axios.get("http://localhost:3000/task/getAll", {
-        params: {
-          isDone: true,
-        },
-      });
-      console.log(data);
-      setTasks(data);
+      isDone = true;
+    } else if (option.value === "not done") {
+      isDone = false;
     }
 
-    if (option.value === "not done") {
+    try {
       const { data } = await axios.get("http://localhost:3000/task/getAll", {
         params: {
-          isDone: false,
+          isDone: isDone,
         },
       });
-      setTasks(data);
-    }
 
-    if (option.value === "all") {
-      const { data } = await axios.get("http://localhost:3000/task/getAll");
       setTasks(data);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
     }
   };
 
@@ -131,9 +176,7 @@ export default function Home() {
           onKeyDown={({ key }) => handleCreateTaskByEnterKey(key)}
           onChange={({ target }) => setTitle(target.value)}
         />
-        {!!titleError && (
-          <span className="text-red-600"> {titleError}</span>
-        )}
+        {!!titleError && <span className="text-red-600"> {titleError}</span>}
 
         <div className="pt-5">
           <div className="flex items-center justify-between">
@@ -150,19 +193,26 @@ export default function Home() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
           {tasks.length === 0 && (
-            <div className="w-full flex items-center flex-col">
-              <Lottie
-                height={400}
-                width={400}
-                options={{
-                  autoplay: true,
-                  loop: true,
-                  animationData: animationData,
-                }}
-              />
-              <p>You do not have any task</p>
-            </div>
+            <>
+              {isLoading ? (
+                <p>Carregando...</p>
+              ) : (
+                <div className="w-full flex items-center flex-col">
+                  <Lottie
+                    height={400}
+                    width={400}
+                    options={{
+                      autoplay: true,
+                      loop: true,
+                      animationData: animationData,
+                    }}
+                  />
+                  <p>You do not have any task</p>
+                </div>
+              )}
+            </>
           )}
 
           {tasks
