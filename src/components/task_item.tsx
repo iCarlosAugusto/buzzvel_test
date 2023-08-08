@@ -84,7 +84,7 @@ export const TaskItem = ({
             <Image
               onClick={handleShowSubTaskForm}
               src="plus-circle.svg"
-              alt="Vercel Logo"
+              alt="plus-circle"
               className="cursor-pointer mr-2"
               width={32}
               height={32}
@@ -94,7 +94,7 @@ export const TaskItem = ({
             <Image
               onClick={handleCreateSubtask}
               src="check.svg"
-              alt="Vercel Logo"
+              alt="check icon"
               className="cursor-pointer mr-2"
               width={32}
               height={32}
@@ -105,7 +105,7 @@ export const TaskItem = ({
           <Image
             onClick={deleteTask}
             src="trash.svg"
-            alt="Vercel Logo"
+            alt="trash icon"
             className="cursor-pointer"
             width={32}
             height={32}

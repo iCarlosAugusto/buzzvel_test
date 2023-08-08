@@ -20,7 +20,7 @@ export const InputSearchComponent: React.FC<InputProps> = ({
       <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
         <Image
           src="search.svg"
-          alt="Vercel Logo"
+          alt="search icon"
           className="dark:invert"
           width={24}
           height={24}

@@ -25,7 +25,7 @@ export const InputComponent: React.FC<InputProps> = ({
       >
         <Image
           src="plus.svg"
-          alt="Vercel Logo"
+          alt="plus icon"
           className="dark:invert"
           width={24}
           height={24}
