@@ -26,7 +26,7 @@ export default function Home() {
     setTitleError("");
     try {
       const { data: task } = await axios.post(
-        "http://localhost:3000/task/create",
+        "https://buzzvel-api-test.onrender.com/task/create",
         {
           title: title,
         }
@@ -46,7 +46,7 @@ export default function Home() {
   const fetchAllTasks = async () => {
     setIsLoading(true);
     try {
-      const { data } = await axios.get("http://localhost:3000/task/getAll");
+      const { data } = await axios.get("https://buzzvel-api-test.onrender.com/task/getAll");
       setTasks(data);
       setIsLoading(false);
     } catch (error) {
@@ -61,7 +61,7 @@ export default function Home() {
 
   const handleDeleteTask = async (task: Task) => {
     try {
-      await axios.post("http://localhost:3000/task/delete", {
+      await axios.post("https://buzzvel-api-test.onrender.com/task/delete", {
         id: task.id,
       });
       const tasksUpdated = tasks.filter((taskItem) => taskItem.id !== task.id);
@@ -78,7 +78,7 @@ export default function Home() {
   const handleChangeTaskStatus = async (task: Task, index: number) => {
     const statusUpdated = !task.isDone;
     try {
-      await axios.post("http://localhost:3000/task/update", {
+      await axios.post("https://buzzvel-api-test.onrender.com/task/update", {
         id: task.id,
         isDone: statusUpdated,
       });
@@ -103,7 +103,7 @@ export default function Home() {
   ) => {
     try {
       const { data: subtaskResult } = await axios.post(
-        "http://localhost:3000/task/createSubtask",
+        "https://buzzvel-api-test.onrender.com/task/createSubtask",
         {
           taskId: task.id,
           title: subTask,
@@ -136,7 +136,7 @@ export default function Home() {
     }
 
     try {
-      const { data } = await axios.get("http://localhost:3000/task/getAll", {
+      const { data } = await axios.get("https://buzzvel-api-test.onrender.com/task/getAll", {
         params: {
           isDone: isDone,
         },
