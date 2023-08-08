@@ -56,13 +56,13 @@ export const TaskItem = ({
         type="checkbox"
         className="cursor-pointer w-10 h-10 border-gray-300 focus:outline-none focus:ring-0"
       />
-      <div className="p-2 m-2 bg-slate-500 flex flex-1 flex-row justify-between">
+      <div className="p-2 m-2 bg-slate-400 flex flex-1 flex-row justify-between">
         <div className="inline-block">
           <p className="text-white">{title}</p>
           {isCreatingSubtask && (
             <input
               ref={inputTaskRef}
-              className="bg-transparent mb-2"
+              className="bg-transparent mb-2 placeholder-gray-200 text-gray-200"
               placeholder="Add a subtask"
               value={subTask}
               onChange={({ target }) => setSubTask(target.value)}
@@ -71,7 +71,7 @@ export const TaskItem = ({
           <ul>
             {!!subTasks &&
               subTasks.map((subtask) => (
-                <li key={subtask.id}> {subtask.title}</li>
+                <li key={subtask.id}> - {subtask.title}</li>
               ))}
           </ul>
 

@@ -10,7 +10,7 @@ export const InputSearchComponent: React.FC<InputProps> = ({
   ...rest
 }) => {
   return (
-    <div className="relative py-6">
+    <div className="relative py-2">
       <input
         {...rest}
         type="text"

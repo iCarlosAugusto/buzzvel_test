@@ -14,13 +14,18 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState<string>("");
   const [search, setSearch] = useState<string>("");
+  const [titleError, setTitleError] = useState<string>("");
 
   const subitForm = async () => {
+    if (!title) {
+      setTitleError("You have to type something");
+      return;
+    }
+    setTitleError("");
     const { data: task } = await axios.post(
       "http://localhost:3000/task/create",
       {
         title: title,
-        message: "TESTE REMOVER",
       }
     );
     setTitle("");
@@ -120,12 +125,15 @@ export default function Home() {
         <p className="text-5xl">What we gonna build today?</p>
 
         <InputComponent
-          placeholder="Títutlo"
+          placeholder="Title"
           value={title}
           onClickPlus={subitForm}
           onKeyDown={({ key }) => handleCreateTaskByEnterKey(key)}
           onChange={({ target }) => setTitle(target.value)}
         />
+        {!!titleError && (
+          <span className="text-red-600"> {titleError}</span>
+        )}
 
         <div className="pt-5">
           <div className="flex items-center justify-between">

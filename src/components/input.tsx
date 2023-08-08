@@ -12,7 +12,7 @@ export const InputComponent: React.FC<InputProps> = ({
   ...rest
 }) => {
   return (
-    <div className="relative rounded-md">
+    <div className="relative rounded-md py-2">
       <input
         {...rest}
         type="text"
@@ -24,7 +24,7 @@ export const InputComponent: React.FC<InputProps> = ({
         onClick={onClickPlus}
       >
         <Image
-          src="plus-circle.svg"
+          src="plus.svg"
           alt="Vercel Logo"
           className="dark:invert"
           width={24}
